@@ -1,18 +1,16 @@
 import json
 import datetime
 from flask import current_app
-from slugify import slugify
 from src.extensions import cache
 from sheetfu import SpreadsheetApp
 
-@cache.memoize(300)
 def parser(spreadsheet_id = None, worksheet_names = {}):
     output = {}
     data = {}
     if spreadsheet_id is not None:
-        # figure out what to do if there are no worksheet names.
         for idx, worksheet_name in enumerate(worksheet_names):
             data[worksheet_name] = read_spreadsheet(spreadsheet_id, worksheet_name)
+        data["generated"] = datetime.datetime.now()
         output = json.dumps(data, default=str)
     return output
 
@@ -24,6 +22,7 @@ def read_spreadsheet(spreadsheet_id, worksheet_name):
     """
     # list that will be returned
     data = []
+    current_app.log.info('Connect directly to the spreadsheet %s and the worksheet %s.' % (spreadsheet_id, worksheet_name))
     try:
         # connect to and load the spreadsheet data
         client = SpreadsheetApp(from_env=True)
