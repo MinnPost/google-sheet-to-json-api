@@ -33,9 +33,9 @@ def parser():
                 output = cached_custom_output
         else:
             current_app.log.error('No spreadsheet ID is present.')
-            output = {"error": "no spreadsheet ID"}
+            output = {"No spreadsheet ID is present"}
     else:
-        output = {"error": "no request data"}
+        output = {"No request data is available"}
 
     mime = 'application/json'
     ctype = 'application/json; charset=UTF-8'
