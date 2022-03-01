@@ -57,7 +57,7 @@ To run Redis on Heroku, installing the free Heroku Redis add-on should be suffic
 
 Use the following fields in your `.env` or in your Heroku settings.
 
-- `CACHE_TYPE = "redis"`
+- `CACHE_TYPE = "RedisCache"`
 - `CACHE_REDIS_HOST = "redis"`
 - `CACHE_REDIS_PORT = "6379"` (unless you are using a non-default port for Redis)
 - `CACHE_REDIS_DB = "0"` (unless you need a separate Redis database. Redis creates databases in numeric order, so you can use other numbers)

@@ -8,7 +8,7 @@ from src.parser import bp
 def parser():
     output = {}
     if request.data:
-        data = json.loads(request.data)
+        data = request.json
         spreadsheet_id = data["spreadsheet_id"]
         if spreadsheet_id:
             if data["worksheet_names"]:
@@ -49,7 +49,7 @@ def parser():
 @bp.route("/custom-overwrite/", methods=['POST'])
 def overwrite():
     output = {}
-    data = json.loads(request.data)
+    data = request.json
     spreadsheet_id = data["spreadsheet_id"]
     if spreadsheet_id:
         if data["worksheet_names"]:
