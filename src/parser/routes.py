@@ -35,6 +35,7 @@ def parser():
             current_app.log.error('No spreadsheet ID is present.')
             output = {"No spreadsheet ID is present"}
     else:
+        current_app.log.error(request)
         output = {"No request data is available"}
 
     mime = 'application/json'
