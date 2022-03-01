@@ -7,7 +7,7 @@ from src.parser import bp
 @bp.route("/", methods=['POST'])
 def parser():
     output = {}
-    if request.data:
+    if request.json:
         data = request.json
         spreadsheet_id = data["spreadsheet_id"]
         if spreadsheet_id:
