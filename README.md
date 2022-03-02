@@ -133,12 +133,17 @@ In the project's Heroku settings, enter the configuration values from the produc
 
 Currently, this application has two endpoints:
 
-- `/candidate-tracker/` is a cached version of the JSON data, parsed from the Google Sheet.
-- `/candidate-tracker/push-s3` pushes the current JSON data, parsed from the Google Sheet, to Amazon S3.
+- `/parser/` is the main endpoint. Sending a `POST` request to it with at least a Google Sheet ID, and optionally a list of worksheet names, will return JSON of that Google sheet's data and cache it. If there is a customized JSON structure, it will return that instead.
+- `/parser/custom-overwrite` receives the same data as above, plus an `output` key with how the JSON should be formatted. If it is present, it will be cached, and `/parser/` will return that data instead.
 
+For both endpoints, use `application/json` as the `Content-Type` header value.
 
-send a post request to http://192.168.1.6:5000/parser/
+### JSON example
+
+For the default request, `/parser/`, this is an example JSON request:
+```json
 {
-    "spreadsheet_id": "1HpggjOwgl5PF3U3wroOt-73Bz-_vZPRKRljfBqn4IPc",
+    "spreadsheet_id": "1iQudNp6ip9BRrIfCBhDlogVMi3MeZQa_X071-o_Of_E",
     "worksheet_names": ["Races", "Candidates"]
 }
+```
