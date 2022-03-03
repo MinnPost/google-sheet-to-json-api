@@ -6,6 +6,7 @@ from src.parser import bp
 
 @bp.route("/", methods=['POST'])
 def parser():
+    cache_timeout = current_app.config["CACHE_DEFAULT_TIMEOUT"]
     output = {}
     if request.data:
         data = json.loads(request.data)
@@ -23,8 +24,8 @@ def parser():
                 cached_output = cache.get(cache_key)
                 if cached_output == None:
                     current_app.log.info('Cached data is not available. Try to load data from the spreadsheet and cache it.')
-                    output = spreadsheet.parser(spreadsheet_id, worksheet_names)
-                    cached_output = cache.set(cache_key, output, timeout=300)
+                    output = spreadsheet.parser(spreadsheet_id, worksheet_names, cache_timeout)
+                    cached_output = cache.set(cache_key, output, timeout=cache_timeout)
                 else:
                     current_app.log.info('Custom formatted data is not available but cached data is. Send it back for formatting.')
                     output = cached_output
@@ -49,8 +50,11 @@ def parser():
 @bp.route("/custom-overwrite/", methods=['POST'])
 def overwrite():
     output = {}
+    cache_timeout = 0
     data = json.loads(request.data)
     spreadsheet_id = data["spreadsheet_id"]
+    if "cache_timeout" in data:
+        cache_timeout = data["cache_timeout"]
     if spreadsheet_id:
         if data["worksheet_names"]:
             worksheet_names = data["worksheet_names"]
@@ -61,7 +65,7 @@ def overwrite():
         cached_output = cache.get(cache_key)
         if cached_output == None:
             output = data["output"]
-            cached_output = cache.set(cache_key, output, timeout=600)
+            cached_output = cache.set(cache_key, output, timeout=cache_timeout)
         else:
             output = cached_output
 

@@ -1,16 +1,19 @@
 import json
 import datetime
+from datetime import timedelta
 from flask import current_app
 from src.extensions import cache
 from sheetfu import SpreadsheetApp
 
-def parser(spreadsheet_id = None, worksheet_names = {}):
+def parser(spreadsheet_id = None, worksheet_names = {}, cache_timeout = None):
     output = {}
     data = {}
     if spreadsheet_id is not None:
         for idx, worksheet_name in enumerate(worksheet_names):
             data[worksheet_name] = read_spreadsheet(spreadsheet_id, worksheet_name)
         data["generated"] = datetime.datetime.now()
+        if cache_timeout is not None:
+            data["cache_timeout"] = data["generated"] + timedelta(seconds=int(cache_timeout))
         output = json.dumps(data, default=str)
     return output
 
