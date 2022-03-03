@@ -133,17 +133,12 @@ In the project's Heroku settings, enter the configuration values from the produc
 
 Currently, this application has two endpoints:
 
-- `/parser/` is the main endpoint. Sending a `POST` request to it with at least a Google Sheet ID, and optionally a list of worksheet names, will return JSON of that Google sheet's data and cache it. If there is a customized JSON structure, it will return that instead.
-- `/parser/custom-overwrite` receives the same data as above, plus an `output` key with how the JSON should be formatted. If it is present, it will be cached, and `/parser/` will return that data instead.
-
-For both endpoints, use `application/json` as the `Content-Type` header value.
-
-### JSON example
-
-For the default request, `/parser/`, this is an example JSON request:
-```json
-{
-    "spreadsheet_id": "1iQudNp6ip9BRrIfCBhDlogVMi3MeZQa_X071-o_Of_E",
-    "worksheet_names": ["Races", "Candidates"]
-}
-```
+- `/parser/` is the main endpoint. It accepts `GET` requests, and will return JSON of that Google sheet's data and cache it. If there is a customized JSON structure that has already been cached and has not expired, it will return that instead. A `GET` request supports these parameters on the URL:
+    - `spreadsheet_id` is an ID of a Google Sheet that the application user can access.
+    - `worksheet_names` is an optional parameter of hyphen-separated worksheet names, such as `Races-Candidates`. If it is left blank, the endpoint will assume it should look for `Sheet1`.
+    - `skip_cache` is an optional parameter to bypass any previously cached data. With this parameter, data from the spreadsheet will override whatever might currently be cached, and will itself be cached.
+- `/parser/custom-overwrite/` receives `POST` requests. It receives custom formatted JSON, caches it, and returns it. A `POST` request requires `appliation/json` as the `Content-Type` header and supports these parameters in the body:
+    - `spreadsheet_id` is an ID of a Google Sheet that the application user can access.
+    - `worksheet_names` is an optional list of worksheet names, such as `["Races", "Candidates"]`. If it is left out, the endpoint will assume it should look for `Sheet1`.
+    - `cache_timeout` is an optional number of seconds for which the cache should last before it expires. If it left out, the cache will not expire (though Redis may delete it).
+    - `output` is a full JSON output of the Google Sheet as it should be stored.

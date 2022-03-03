@@ -12,8 +12,10 @@ def parser(spreadsheet_id = None, worksheet_names = {}, cache_timeout = None):
         for idx, worksheet_name in enumerate(worksheet_names):
             data[worksheet_name] = read_spreadsheet(spreadsheet_id, worksheet_name)
         data["generated"] = datetime.datetime.now()
-        if cache_timeout is not None:
+        if cache_timeout is not None and cache_timeout != 0:
             data["cache_timeout"] = data["generated"] + timedelta(seconds=int(cache_timeout))
+        elif cache_timeout == 0:
+            data["cache_timeout"] = 0
         output = json.dumps(data, default=str)
     return output
 
