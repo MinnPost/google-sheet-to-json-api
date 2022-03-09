@@ -103,12 +103,14 @@ class CacheStorage(object):
 
     def save(self, key, data):
         current_app.log.info(f"Store data in the cache. The key is {key} and the timeout is {self.cache_timeout}.")
-        if self.cache_timeout is not None and self.cache_timeout != 0:
-            data["cache_timeout"] = data["generated"] + timedelta(seconds=int(self.cache_timeout))
-        elif self.cache_timeout == 0:
-            data["cache_timeout"] = 0
+        if self.cache_data == "true" and self.bypass_cache == "false":
+            if self.cache_timeout is not None and self.cache_timeout != 0:
+                data["cache_timeout"] = data["generated"] + timedelta(seconds=int(self.cache_timeout))
+            elif self.cache_timeout == 0:
+                data["cache_timeout"] = 0
         output = json.dumps(data, default=str)
-        cache.set(key, output, timeout=self.cache_timeout)
+        if self.cache_data == "true" and self.bypass_cache == "false":
+            cache.set(key, output, timeout=self.cache_timeout)
         return output
 
 
