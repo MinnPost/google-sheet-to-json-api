@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "46f6c7c077db0efc65606c0f2321211bb8e868369c64857a7755dccaedf25b0a"
+            "sha256": "d9199cfb4bb12ff1bcf58ed3e45af2bed58fc40fbf0148fbaf1211c071d9fab5"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -18,19 +18,19 @@
     "default": {
         "boto3": {
             "hashes": [
-                "sha256:8f59383fe578ac9107466a464d7198933e5332d85a4790f2e01cf24a4a7f635b",
-                "sha256:af92931f65e33e7450c3389c6cc6ab6b3e2f619697ea5566aacc0f16f3b21f61"
+                "sha256:16fae86d0c4993fd5112128bb4622a879f02363bccd045153cc0bbd7722cc9a5",
+                "sha256:e17d994d222162dac02ec32fde6ae910d819ebf239a94dddcee47def2c82b9c9"
             ],
             "index": "pypi",
-            "version": "==1.21.7"
+            "version": "==1.21.13"
         },
         "botocore": {
             "hashes": [
-                "sha256:8d41deb25e585b0d7b6ee8547990d5e95562f1dc5d3127af58459450b25c13c7",
-                "sha256:c44758c487df7a357c4a103d959962d78e225d1ab6c9eeda4c77f79a410ccd19"
+                "sha256:2c40f4fc3925b9057869beda1413a7b77edb7a28eb05c6265eaf6ca1ca7d3b63",
+                "sha256:9fe55f6eab0977b00afd90e770ef2c8b989fa7b18e5c14b22ba62216ec3b564a"
             ],
             "markers": "python_version >= '3.6'",
-            "version": "==1.24.9"
+            "version": "==1.24.14"
         },
         "cachetools": {
             "hashes": [
@@ -89,11 +89,11 @@
         },
         "google-api-core": {
             "hashes": [
-                "sha256:7d030edbd3a0e994d796e62716022752684e863a6df9864b6ca82a1616c2a5a6",
-                "sha256:f33863a6709651703b8b18b67093514838c79f2b04d02aa501203079f24b8018"
+                "sha256:80cf307660624f84c754d68c3c6cd31780368019741d87e0c5df5ed84730ed26",
+                "sha256:eadba785e358e61be576f2a93f361bb15f144162814c7b3303e78c12288aa33f"
             ],
             "markers": "python_version >= '3'",
-            "version": "==2.5.0"
+            "version": "==2.6.1"
         },
         "google-api-python-client": {
             "hashes": [
