@@ -92,6 +92,7 @@ class CacheStorage(object):
         if method == "GET":
             self.bypass_cache = args.get("bypass_cache", "false")
             self.cache_data = args.get("cache_data", "true")
+            self.cache_timeout = int(args.get("cache_timeout", self.cache_timeout))
         else:
             self.bypass_cache = "false"
             self.cache_data = "true"
@@ -103,13 +104,13 @@ class CacheStorage(object):
 
     def save(self, key, data):
         current_app.log.info(f"Store data in the cache. The key is {key} and the timeout is {self.cache_timeout}.")
-        if self.cache_data == "true" and self.bypass_cache == "false":
+        if self.cache_data == "true":
             if self.cache_timeout is not None and self.cache_timeout != 0:
                 data["cache_timeout"] = data["generated"] + timedelta(seconds=int(self.cache_timeout))
             elif self.cache_timeout == 0:
                 data["cache_timeout"] = 0
         output = json.dumps(data, default=str)
-        if self.cache_data == "true" and self.bypass_cache == "false":
+        if self.cache_data == "true":
             cache.set(key, output, timeout=self.cache_timeout)
         return output
 
@@ -118,7 +119,7 @@ class CacheStorage(object):
         custom_cache_key = key + '-custom'
         if self.cache_data == "false" or self.bypass_cache == "true":
             output = None
-            current_app.log.info('Cached data is not available.')
+            current_app.log.info(f"Cached data for {key} is not available.")
             if self.bypass_cache == "true":
                 cache.delete(key)
                 cache.delete(custom_cache_key)
