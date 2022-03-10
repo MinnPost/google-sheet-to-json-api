@@ -120,7 +120,7 @@ class CacheStorage(object):
                 if "generated" in data:
                     if type(data["generated"]) == str:
                         data["generated"] = datetime.datetime.fromisoformat(data["generated"])
-                data["cache_timeout"] = data["generated"] + timedelta(seconds=int(self.cache_timeout))
+                    data["cache_timeout"] = data["generated"] + timedelta(seconds=int(self.cache_timeout))
                 if "customized" in data:
                     if type(data["customized"]) == str:
                         data["customized"] = datetime.datetime.fromisoformat(data["customized"])
@@ -137,16 +137,9 @@ class CacheStorage(object):
 
 
     def get(self, key):
-        custom_cache_key = key + '-custom'
-        if self.cache_data == "false" or self.bypass_cache == "true":
-            output = None
-            current_app.log.info(f"Cached data for {key} is not available.")
-            if self.bypass_cache == "true":
-                cache.delete(key)
-                cache.delete(custom_cache_key)
-            return output
-        
+        custom_cache_key = key + '-custom'        
         output = cache.get(custom_cache_key)
+        #print(custom_cache_key)
         if output == None:
             output = cache.get(key)
             if output != None:
@@ -158,5 +151,9 @@ class CacheStorage(object):
             current_app.log.info(f"Delete data from the cache. The key is {key}.")
             cache.delete(key)
             cache.delete(custom_cache_key)
+
+        if self.bypass_cache == "true":
+            output = None
+            current_app.log.info(f"Cached data for {key} is not available.")
 
         return output
