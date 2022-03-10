@@ -12,10 +12,11 @@ def parser():
     if spreadsheet_id != None:
         worksheet_slug = request.args.get("worksheet_names", "Sheet1")
         worksheet_names = worksheet_slug.split("-")
+        worksheet_names.sort()
         key = spreadsheet_id + '-' + worksheet_slug
         output = storage.get(key)
         if output == None:
-            current_app.log.info("Stored data is not available. Try to load data from the spreadsheet.")
+            current_app.log.info(f"Stored data for {key} is not available. Try to load data from the spreadsheet.")
             data = spreadsheet.parser(spreadsheet_id, worksheet_names)
             output = storage.save(key, data)
     else:
@@ -42,12 +43,13 @@ def overwrite():
             worksheet_names = data["worksheet_names"]
         else:
             worksheet_names = {"Sheet1"}
+        worksheet_names.sort()
         worksheet_slug = '-'.join(worksheet_names)
         key = spreadsheet_id + '-' + worksheet_slug + "-custom"
         output = storage.get(key)
         if output == None:
-            current_app.log.info("Stored data is not available. Try to load data from the spreadsheet.")
-            output = spreadsheet.parser(spreadsheet_id, worksheet_names)
+            current_app.log.info(f"Stored data for {key} is not available. Load data from the JSON request.")
+            output = data["output"]
             output = storage.save(key, output)
 
     mime = 'application/json'
