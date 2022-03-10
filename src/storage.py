@@ -136,9 +136,10 @@ class CacheStorage(object):
         if output == None:
             output = cache.get(key)
             if output != None:
-                current_app.log.info(f"Get data from the cache. The key is {key}. Send it back for display.")
+                current_app.log.info(f"Get data from the cache. The key is {key}.")
         else:
-            current_app.log.info(f"Get data from the cache. The key is {custom_cache_key}. Send it back for display.")
+            current_app.log.info(f"Get data from the cache. The key is {custom_cache_key}.")
+
         if self.delete_cache == "true":
             current_app.log.info(f"Delete data from the cache. The key is {key}.")
             cache.delete(key)
