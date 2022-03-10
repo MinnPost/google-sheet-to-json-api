@@ -104,6 +104,7 @@ class CacheStorage(object):
             self.cache_timeout = int(args.get("cache_timeout", self.cache_timeout))
         else:
             self.bypass_cache = "false"
+            self.delete_cache = "false"
             self.cache_data = "true"
             if "bypass_cache" in args:
                 self.bypass_cache = args["bypass_cache"]
