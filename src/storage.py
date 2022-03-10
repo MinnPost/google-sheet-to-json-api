@@ -116,8 +116,11 @@ class CacheStorage(object):
                 data["cache_timeout"] = data["generated"] + timedelta(seconds=int(self.cache_timeout))
             elif self.cache_timeout == 0:
                 data["cache_timeout"] = 0
+        else:
+            current_app.log.info(f"Do not cache data for the {key} key.")
         output = json.dumps(data, default=str)
         if self.cache_data == "true":
+            current_app.log.info(f"Store data in the cache. The key is {key}.")
             cache.set(key, output, timeout=self.cache_timeout)
         return output
 
