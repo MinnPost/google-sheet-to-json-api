@@ -166,9 +166,3 @@ All of these parameters are specific to the Redis cache. They are all optional, 
 - `delete_cache` takes a value of "true" or "false". "false" is the default value. If the value is "true" the application will delete the cached data for the Google Sheet.
 - `cache_data` takes a value of "true" or "false". "true" is the default value. If the value is "false" the application will not store data for the Google Sheet in the cache.
 - `cache_timeout` takes the number of seconds that the cache should last before it expires. If present, this will override the default value from the `.env` file. This value only has an effect on requests where data is actually being cached.    
-
-
-
-
-can we use `get_sheets` and pick the first spreadsheet if there is no value for worksheet names?
-test sheet: 121YfyOnxak30lhjdVZCaIE40LBZdamIT1nxev8z3Ck4
