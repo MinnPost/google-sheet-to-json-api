@@ -103,6 +103,8 @@ class CacheStorage(object):
             self.cache_data = "true"
             if "bypass_cache" in args:
                 self.bypass_cache = args["bypass_cache"]
+            if "delete_cache" in args:
+                self.delete_cache = args["delete_cache"]
             if "cache_data" in args:
                 self.cache_data = args["cache_data"]
 
@@ -137,4 +139,9 @@ class CacheStorage(object):
                 current_app.log.info(f"Get data from the cache. The key is {key}. Send it back for display.")
         else:
             current_app.log.info(f"Get data from the cache. The key is {custom_cache_key}. Send it back for display.")
+        if self.delete_cache == "true":
+            current_app.log.info(f"Delete data from the cache. The key is {key}.")
+            cache.delete(key)
+            cache.delete(custom_cache_key)
+
         return output
