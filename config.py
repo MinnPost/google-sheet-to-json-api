@@ -18,3 +18,4 @@ class Config(object):
     CACHE_DEFAULT_TIMEOUT = os.environ.get("CACHE_DEFAULT_TIMEOUT", 500)
     S3_DOMAIN_ROOT = os.path.join(os.environ.get("S3_DOMAIN_ROOT", "https://s3.amazonaws.com/"), '') # make sure it has one slash and only one slash
     USE_AWS_S3 = os.environ.get("USE_AWS_S3", "false").lower()
+    WORKSHEET_NAME_SEPARATOR = os.environ.get("WORKSHEET_NAME_SEPARATOR", "|")

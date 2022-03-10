@@ -116,6 +116,10 @@ To upload a file to S3, fill in these `.env` values to match your S3 account. If
 
 ## Running the application
 
+### Additional configuration
+
+There are a few general `.env` variables not already discussed. You can see these settings, and their default values (or the kind of value they expect), in the repository's `.env-example` file.
+
 ### Local setup and development
 
 1. Install `git`
@@ -146,7 +150,7 @@ Both URL endpoints support many of the same data parameters, but they get passed
 
 #### For all requests
 - `spreadsheet_id` is a *required* ID of a Google Sheet that the application user can access.
-- `worksheet_names` is an optional parameter of hyphen-separated worksheet names, such as `Races-Candidates`. If it is left blank, the endpoint will assume it should look for `Sheet1`. This value will be sorted alphabetically if there are multiple worksheets.
+- `worksheet_names` is an optional parameter of worksheet names, such as `Races|Candidates`. If it is left blank, the endpoint will load the first worksheet in the spreadsheet. If there are multiple worksheets provided, they will be sorted alphabetically to keep consistency.
 
 #### For `custom-overwrite` requests only
 - `output` is a full, customized JSON output of the modified Google Sheet data as it should be stored. It is only accepted on the `/parser/custom-overwrite` endpoint as a `POST` parameter.
@@ -167,3 +171,4 @@ All of these parameters are specific to the Redis cache. They are all optional, 
 
 
 can we use `get_sheets` and pick the first spreadsheet if there is no value for worksheet names?
+test sheet: 121YfyOnxak30lhjdVZCaIE40LBZdamIT1nxev8z3Ck4

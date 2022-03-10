@@ -10,8 +10,8 @@ def parser():
     output = {}
     spreadsheet_id = request.args.get("spreadsheet_id", None)
     if spreadsheet_id != None:
-        worksheet_slug = request.args.get("worksheet_names", "Sheet1")
-        worksheet_names = worksheet_slug.split("-")
+        worksheet_slug = request.args.get("worksheet_names", "")
+        worksheet_names = worksheet_slug.split(current_app.config["WORKSHEET_NAME_SEPARATOR"])
         worksheet_names.sort()
         key = spreadsheet_id + '-' + worksheet_slug
         output = storage.get(key)
@@ -42,9 +42,9 @@ def overwrite():
         if data["worksheet_names"]:
             worksheet_names = data["worksheet_names"]
         else:
-            worksheet_names = {"Sheet1"}
+            worksheet_names = []
         worksheet_names.sort()
-        worksheet_slug = '-'.join(worksheet_names)
+        worksheet_slug = current_app.config["WORKSHEET_NAME_SEPARATOR"].join(worksheet_names)
         key = spreadsheet_id + '-' + worksheet_slug + "-custom"
         output = storage.get(key)
         if output == None:

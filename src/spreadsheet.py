@@ -3,9 +3,13 @@ from flask import current_app
 from src.extensions import cache
 from sheetfu import SpreadsheetApp
 
-def parser(spreadsheet_id = None, worksheet_names = {}):
+def parser(spreadsheet_id = None, worksheet_names = [""]):
     data = {}
     if spreadsheet_id is not None:
+        if worksheet_names == [""]:
+            sheets = get_spreadsheet_sheets(spreadsheet_id)
+            first_worksheet_name = sheets[0].name
+            worksheet_names = first_worksheet_name.split(current_app.config["WORKSHEET_NAME_SEPARATOR"])
         for idx, worksheet_name in enumerate(worksheet_names):
             data[worksheet_name] = read_spreadsheet(spreadsheet_id, worksheet_name)
         data["generated"] = datetime.datetime.now()
@@ -13,7 +17,27 @@ def parser(spreadsheet_id = None, worksheet_names = {}):
 
 
 @cache.memoize(10)
-def read_spreadsheet(spreadsheet_id, worksheet_name):
+def get_spreadsheet_sheets(spreadsheet_id):
+    """
+    Connect to Google spreadsheet and return the list of sheets
+    """
+    # list that will be returned
+    data = []
+    current_app.log.info("Connect directly to the spreadsheet %s." % (spreadsheet_id))
+    try:
+        # connect to and load the spreadsheet data
+        client = SpreadsheetApp(from_env=True)
+        spreadsheet = client.open_by_id(spreadsheet_id)
+        sheets = spreadsheet.get_sheets()
+        data = sheets
+    except Exception as err:
+        current_app.log.error("[%s] Unable to connect to spreadsheet source: %s. The error was %s" % ('spreadsheet', spreadsheet_id, err))
+    
+    return data
+
+
+@cache.memoize(10)
+def read_spreadsheet(spreadsheet_id, worksheet_name = None, sheet = None):
     """
     Connect to Google spreadsheet and return the data as a list of dicts with the header values as the keys.
     """
@@ -24,7 +48,8 @@ def read_spreadsheet(spreadsheet_id, worksheet_name):
         # connect to and load the spreadsheet data
         client = SpreadsheetApp(from_env=True)
         spreadsheet = client.open_by_id(spreadsheet_id)
-        sheet = spreadsheet.get_sheet_by_name(worksheet_name)
+        if worksheet_name != None:
+            sheet = spreadsheet.get_sheet_by_name(worksheet_name)
         data_range = sheet.get_data_range()
         rows = data_range.get_values()
 
