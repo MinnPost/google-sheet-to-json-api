@@ -12,10 +12,10 @@ class Storage(object):
         self.use_aws_s3 = current_app.config["USE_AWS_S3"]
         self.http_method = http_method
         if self.http_method == "GET":
-            self.external_use_s3 = self.args.get("external_use_s3", "false")
+            self.external_use_s3 = self.args.get("external_use_s3", "")
         else:
             self.args = json.loads(args)
-            self.external_use_s3 = "false"
+            self.external_use_s3 = ""
             if "external_use_s3" in self.args:
                 self.external_use_s3 = self.args["external_use_s3"]
         self.class_to_use = self.check_method()
