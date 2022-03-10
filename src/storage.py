@@ -38,6 +38,10 @@ class Storage(object):
 
 
     def save(self, key, data):
+        try:
+            data = json.loads(data)
+        except:
+            data = data
         class_to_use = self.class_to_use
         output = class_to_use.save(key, data)
         return output
