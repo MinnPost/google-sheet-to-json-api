@@ -7,26 +7,30 @@ from flask import current_app
 
 class Storage(object):
 
-    def __init__(self, args, method = "GET"):
+    def __init__(self, args, http_method = "GET"):
         self.args = args
         self.use_aws_s3 = current_app.config["USE_AWS_S3"]
-        if method == "GET":
-            self.external_use_s3 = args.get("external_use_s3", "false")
+        self.http_method = http_method
+        if self.http_method == "GET":
+            self.external_use_s3 = self.args.get("external_use_s3", "false")
         else:
+            self.args = json.loads(args)
             self.external_use_s3 = "false"
-            if "external_use_s3" in args:
-                self.external_use_s3 = args["external_use_s3"]
+            if "external_use_s3" in self.args:
+                self.external_use_s3 = self.args["external_use_s3"]
         self.class_to_use = self.check_method()
 
 
     def check_method(self):
-        class_to_use = CacheStorage(self.args)
+        class_to_use = CacheStorage(self.args, self.http_method)
         try_to_use_s3 = False
         can_use_s3 = False
         if self.external_use_s3 == "true" or self.use_aws_s3 == "true":
             try_to_use_s3 = True
+        if self.external_use_s3 == "false" or self.use_aws_s3 == "false":
+            try_to_use_s3 = False
         if try_to_use_s3 == True:
-            s3_instance = S3Storage(self.args)
+            s3_instance = S3Storage(self.args, self.http_method)
             can_use_s3 = s3_instance.check_config()
         if try_to_use_s3 == True and can_use_s3 == True:
             class_to_use = s3_instance
@@ -47,7 +51,7 @@ class Storage(object):
 
 class S3Storage(object):
 
-    def __init__(self, args = None):
+    def __init__(self, args = None, http_method = "GET"):
         self.domain = current_app.config["S3_DOMAIN_ROOT"]
         self.bucket = current_app.config["AWS_BUCKET"]
         self.folder = current_app.config["AWS_FOLDER"]
@@ -87,10 +91,11 @@ class S3Storage(object):
 
 class CacheStorage(object):
 
-    def __init__(self, args, method = "GET"):
+    def __init__(self, args, http_method = "GET"):
         self.cache_timeout = current_app.config["CACHE_DEFAULT_TIMEOUT"]
-        if method == "GET":
+        if http_method == "GET":
             self.bypass_cache = args.get("bypass_cache", "false")
+            self.delete_cache = args.get("delete_cache", "false")
             self.cache_data = args.get("cache_data", "true")
             self.cache_timeout = int(args.get("cache_timeout", self.cache_timeout))
         else:
