@@ -17,4 +17,4 @@ class Config(object):
     CACHE_REDIS_URL = os.environ.get("CACHE_REDIS_URL", "redis://127.0.0.1:6379/0")
     CACHE_DEFAULT_TIMEOUT = os.environ.get("CACHE_DEFAULT_TIMEOUT", 500)
     S3_DOMAIN_ROOT = os.path.join(os.environ.get("S3_DOMAIN_ROOT", "https://s3.amazonaws.com/"), '') # make sure it has one slash and only one slash
-    USE_AWS_S3 = os.environ.get("USE_AWS_S3", "false")
+    USE_AWS_S3 = os.environ.get("USE_AWS_S3", "false").lower()

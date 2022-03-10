@@ -1,11 +1,11 @@
 # Google Sheet to JSON API
 An API to convert a Google Sheet to JSON
 
-## Google Sheets setup
+## Google Sheets
 
 For both local and remote environments, you'll need to make sure the application has access to any Google Sheets data that it needs to load. In version 4 of the Sheets API, this happens through Service Accounts.
 
-### Creating a new authentication
+### Creating a new Google Sheets authentication
 
 If you are authenticating this application with the Sheets API for the first time, you'll need to create a new Google Cloud project. Start by following [this guide from Google](https://developers.google.com/workspace/guides/create-project). When you've finished Google's steps, you should have a new project.
 
@@ -22,7 +22,7 @@ This new Service account will have an automatically-created email address. For t
 
 If this user is new or it is being given new access, it can take a few minutes for the changes to propogate.
 
-### Accessing an existing authentication
+### Accessing an existing Google Sheets authentication
 
 If the Service Account user already exists in the Google Cloud Platform, you can access it at https://console.cloud.google.com/home/dashboard?project=[application-name].
 
@@ -38,62 +38,7 @@ Follow these steps to access the authentication credentials:
 
 Once you have downloaded the JSON file with the credentials, you will use the values from it in the `.env` file or in the project's Heroku settings. See the sections of this readme that cover authentication for Google Sheets. Once you've authenticated successfully, you don't have to keep the JSON file around, unless you'd like to have a backup.
 
-## Redis setup
-
-Before running the application, you'll need to run a Redis server for caching data. One way to do this is with Homebrew.
-
-### Local setup
-
-1. Run `brew update` then `brew install redis`
-1. If you want Redis to start automatically on login, run `brew services start redis`. To stop it, run `brew services stop redis`. If you want to run Redis in a terminal shell instead, you can run `redis-server /usr/local/etc/redis.conf` instead of using brew service.
-1. Test if Redis is running with the command `redis-cli ping`. Redis should respond with "PONG."
-1. You shouldn't need a graphic interface for this project, but if you prefer to use one, [Medis](https://getmedis.com) is free on the Mac App Store.
-
-### Production setup
-
-To run Redis on Heroku, installing the free Heroku Redis add-on should be sufficient.
-
-### Configuration
-
-Use the following fields in your `.env` or in your Heroku settings.
-
-- `CACHE_TYPE = "RedisCache"`
-- `CACHE_REDIS_HOST = "redis"`
-- `CACHE_REDIS_PORT = "6379"` (unless you are using a non-default port for Redis)
-- `CACHE_REDIS_DB = "0"` (unless you need a separate Redis database. Redis creates databases in numeric order, so you can use other numbers)
-- `CACHE_REDIS_URL = "redis://127.0.0.1:6379/0"` (make sure the `:6379` matches your port value, and that `/0` matches your Redis database number)
-- `CACHE_DEFAULT_TIMEOUT = "500"`
-
-
-## Amazon S3 setup
-
-To push JSON data from this application to Amazon AWS, we use the `boto3` library.
-
-### Configuration
-
-- `AWS_ACCESS_KEY_ID`
-- `AWS_SECRET_ACCESS_KEY`
-
-Fill in these values from the Amazon account.
-
-
-## Application setup
-
-### Set the Google Spreadsheet to load
-
-Go to the Google spreadsheet you are using and copy the ID value from its URL. If the ID was `https://docs.google.com/spreadsheets/d/[spreadsheet-id]/edit#gid=809379382`, the ID would be `[spreadsheet-id]`. Use that value in your `.env` file and in the Heroku settings for the `SPREADSHEET_ID` field value.
-
-### Local setup and development
-
-1. Install `git`
-1. Get the code: `git clone https://github.com/MinnPost/google-sheet-to-json-api.git`
-1. Change the directory: `cd google-sheet-to-json-api`
-1. Create a `.env` file based on the repository's `.env-example` file in the root of your project.
-1. Run `pipenv install`.
-1. Run `pipenv shell`
-1. Run `flask run --host=0.0.0.0`. This creates a basic endpoint server at http://0.0.0.0:5000.
-
-#### Local authentication for Google Sheets
+### Local authentication for Google Sheets
 
 Enter the configuration values from the JSON key downloaded above into the `.env` file's values for these fields:
 
@@ -108,13 +53,7 @@ Enter the configuration values from the JSON key downloaded above into the `.env
 - `SHEETFU_CONFIG_AUTH_PROVIDER_URL`
 - `SHEETFU_CONFIG_CLIENT_CERT_URL`
 
-### Production setup and deployment
-
-#### Code, Libraries and prerequisites
-
-This application should be deployed to Heroku. If you are creating a new Heroku application, clone this repository with `git clone https://github.com/MinnPost/google-sheet-to-json-api.git` and follow [Heroku's instructions](https://devcenter.heroku.com/articles/git#creating-a-heroku-remote) to create a Heroku remote.
-
-#### Production authentication for Google Sheets
+### Production authentication for Google Sheets
 
 In the project's Heroku settings, enter the configuration values from the production-only JSON key downloaded above into the values for these fields:
 
@@ -129,16 +68,102 @@ In the project's Heroku settings, enter the configuration values from the produc
 - `SHEETFU_CONFIG_AUTH_PROVIDER_URL`
 - `SHEETFU_CONFIG_CLIENT_CERT_URL`
 
+## Storage
+
+This API supports storing JSON in either the application's Redis instance (whether locally or on Heroku) or in an Amazon S3 bucket. If you do not enable S3 usage, Redis will be used by default.
+
+### Redis
+
+Before running the application, you'll need to run a Redis server for caching data. One way to do this is with Homebrew.
+
+#### Local setup
+
+1. Run `brew update` then `brew install redis`
+1. If you want Redis to start automatically on login, run `brew services start redis`. To stop it, run `brew services stop redis`. If you want to run Redis in a terminal shell instead, you can run `redis-server /usr/local/etc/redis.conf` instead of using brew service.
+1. Test if Redis is running with the command `redis-cli ping`. Redis should respond with "PONG."
+1. You shouldn't need a graphic interface for this project, but if you prefer to use one, [Medis](https://getmedis.com) is free on the Mac App Store.
+
+#### Production setup
+
+To run Redis on Heroku, installing the free Heroku Redis add-on should be sufficient.
+
+#### Redis configuration
+
+Use the following fields in your `.env` or in your Heroku settings.
+
+- `CACHE_TYPE = "RedisCache"`
+- `CACHE_REDIS_HOST = "redis"`
+- `CACHE_REDIS_PORT = "6379"` (unless you are using a non-default port for Redis)
+- `CACHE_REDIS_DB = "0"` (unless you need a separate Redis database. Redis creates databases in numeric order, so you can use other numbers)
+- `CACHE_REDIS_URL = "redis://127.0.0.1:6379/0"` (make sure the `:6379` matches your port value, and that `/0` matches your Redis database number)
+- `CACHE_DEFAULT_TIMEOUT = "500"`
+
+
+### Amazon S3
+
+To push JSON data from this application to Amazon AWS, we use the `boto3` library.
+
+### Amazon S3 configuration
+
+To upload a file to S3, fill in these `.env` values to match your S3 account. If S3 is enabled, URLs for your files will be `https://s3.amazonaws.com/[bucket]/folder/cachekey.json`.
+
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+- `AWS_BUCKET`
+- `AWS_FOLDER`
+- `USE_AWS_S3` use "true" or "false" for this; it will be converted to lowercase if you forget. "false" is the default value for this setting.
+
+
+## Running the application
+
+### Local setup and development
+
+1. Install `git`
+1. Get the code: `git clone https://github.com/MinnPost/google-sheet-to-json-api.git`
+1. Change the directory: `cd google-sheet-to-json-api`
+1. Create a `.env` file based on the repository's `.env-example` file in the root of your project.
+1. Run `pipenv install`.
+1. Run `pipenv shell`
+1. Run `flask run --host=0.0.0.0`. This creates a basic endpoint server at http://0.0.0.0:5000.
+
+### Production setup and deployment
+
+#### Code, Libraries and prerequisites
+
+This application should be deployed to Heroku. If you are creating a new Heroku application, clone this repository with `git clone https://github.com/MinnPost/google-sheet-to-json-api.git` and follow [Heroku's instructions](https://devcenter.heroku.com/articles/git#creating-a-heroku-remote) to create a Heroku remote.
+
 ## Application usage
 
 Currently, this application has two endpoints:
 
-- `/parser/` is the main endpoint. It accepts `GET` requests, and will return JSON of that Google sheet's data and cache it. If there is a customized JSON structure that has already been cached and has not expired, it will return that instead. A `GET` request supports these parameters on the URL:
-    - `spreadsheet_id` is an ID of a Google Sheet that the application user can access.
-    - `worksheet_names` is an optional parameter of hyphen-separated worksheet names, such as `Races-Candidates`. If it is left blank, the endpoint will assume it should look for `Sheet1`.
-    - `skip_cache` is an optional parameter to bypass any previously cached data. With this parameter, data from the spreadsheet will override whatever might currently be cached, and will itself be cached.
-- `/parser/custom-overwrite/` receives `POST` requests. It receives custom formatted JSON, caches it, and returns it. A `POST` request requires `appliation/json` as the `Content-Type` header and supports these parameters in the body:
-    - `spreadsheet_id` is an ID of a Google Sheet that the application user can access.
-    - `worksheet_names` is an optional list of worksheet names, such as `["Races", "Candidates"]`. If it is left out, the endpoint will assume it should look for `Sheet1`.
-    - `cache_timeout` is an optional number of seconds for which the cache should last before it expires. If it left out, the cache will not expire (though Redis may delete it).
-    - `output` is a full JSON output of the Google Sheet as it should be stored.
+- `/parser/` is the main endpoint. It accepts `GET` requests, and will return JSON of that Google sheet's data and cache it. If there is a customized JSON structure that has already been cached and has not expired, it will return that instead.
+- `/parser/custom-overwrite/` receives `POST` requests. It receives custom formatted JSON, caches it, and returns it. A `POST` request requires `appliation/json` as the `Content-Type` header.
+    
+
+### Data parameters
+
+Both URL endpoints support many of the same data parameters, but they get passed on the URL (in the case of a `GET` endpoint) or in the post body (in the case of a `POST` endpoint). Most parameters are usable by both endpoints, but if they are end-point specific that will be noted.
+
+#### For all requests
+- `spreadsheet_id` is a *required* ID of a Google Sheet that the application user can access.
+- `worksheet_names` is an optional parameter of hyphen-separated worksheet names, such as `Races-Candidates`. If it is left blank, the endpoint will assume it should look for `Sheet1`. This value will be sorted alphabetically if there are multiple worksheets.
+
+#### For `custom-overwrite` requests only
+- `output` is a full, customized JSON output of the modified Google Sheet data as it should be stored. It is only accepted on the `/parser/custom-overwrite` endpoint as a `POST` parameter.
+
+#### For S3 storage only
+- `external_use_s3` is an optional parameter that takes a value of "true" or "false", and determines whether JSON data is saved to Amazon S3 instead of in Redis. A value for this parameter will override the default setting in the `.env` file.
+
+#### For cache storage only
+
+All of these parameters are specific to the Redis cache. They are all optional, but have default values.
+
+- `bypass_cache` takes a value of "true" or "false". "false" is the default value. If the value is "true" the application will not check the Redis cache for any stored data, but will attempt to parse the Google Sheet directly and return its data.
+- `delete_cache` takes a value of "true" or "false". "false" is the default value. If the value is "true" the application will delete the cached data for the Google Sheet.
+- `cache_data` takes a value of "true" or "false". "true" is the default value. If the value is "false" the application will not store data for the Google Sheet in the cache.
+- `cache_timeout` takes the number of seconds that the cache should last before it expires. If present, this will override the default value from the `.env` file. This value only has an effect on requests where data is actually being cached.    
+
+
+
+
+can we use `get_sheets` and pick the first spreadsheet if there is no value for worksheet names?
