@@ -27,7 +27,7 @@ class Storage(object):
         can_use_s3 = False
         if self.external_use_s3 == "true" or self.use_aws_s3 == "true":
             try_to_use_s3 = True
-        if self.external_use_s3 == "false" or self.use_aws_s3 == "false":
+        if self.external_use_s3 == "false":
             try_to_use_s3 = False
         if try_to_use_s3 == True:
             s3_instance = S3Storage(self.args, self.http_method)
@@ -77,6 +77,7 @@ class S3Storage(object):
         file_url = f"{self.domain}{self.bucket}/{file_path}"
         current_app.log.info(f"Store data in S3. The url is {file_url}.")
         data["file_url"] = file_url
+        data.pop("cache_timeout", None)
         output = json.dumps(data, default=str)
         s3 = boto3.client('s3')
         result = s3.put_object(Bucket=self.bucket, 
@@ -129,6 +130,7 @@ class CacheStorage(object):
                 data["cache_timeout"] = 0
         else:
             current_app.log.info(f"Do not cache data for the {key} key.")
+        data.pop("file_url", None)
         output = json.dumps(data, default=str)
         if self.cache_data == "true":
             current_app.log.info(f"Store data in the cache. The key is {key} and the timeout is {self.cache_timeout}.")
