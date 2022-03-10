@@ -113,7 +113,14 @@ class CacheStorage(object):
         current_app.log.info(f"Store data in the cache. The key is {key} and the timeout is {self.cache_timeout}.")
         if self.cache_data == "true":
             if self.cache_timeout is not None and self.cache_timeout != 0:
+                if "generated" in data:
+                    if type(data["generated"]) == str:
+                        data["generated"] = datetime.datetime.fromisoformat(data["generated"])
                 data["cache_timeout"] = data["generated"] + timedelta(seconds=int(self.cache_timeout))
+                if "customized" in data:
+                    if type(data["customized"]) == str:
+                        data["customized"] = datetime.datetime.fromisoformat(data["customized"])
+                    data["cache_timeout"] = data["customized"] + timedelta(seconds=int(self.cache_timeout))
             elif self.cache_timeout == 0:
                 data["cache_timeout"] = 0
         else:
