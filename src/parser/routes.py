@@ -64,12 +64,6 @@ def overwrite():
     ctype = 'application/json; charset=UTF-8'
     res = Response(response = output, status = 200, mimetype = mime)
     res.headers['Content-Type'] = ctype
-    res.headers['Connection'] = 'keep-alive'
+    res.headers["Connection"] = "keep-alive"
+    res.headers["Access-Control-Allow-Origin"] = "*"
     return res
-
-
-@bp.route("/push-s3", methods=['GET'])
-def push_to_s3():
-  output = spreadsheet.parser()
-  s3 = storage.send_to_s3(output)
-  return "Uploaded candidate-tracker.json to S3"
