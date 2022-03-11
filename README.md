@@ -1,5 +1,5 @@
 # Google Sheet to JSON API
-An API to convert a Google Sheet to JSON
+A Flask-based API to convert a Google Sheet to JSON. Structurally, this application is based on [this example](https://github.com/nebularazer/flask-celery-example), which itself is a restructuring of [this example](https://github.com/miguelgrinberg/flask-celery-example) and its [accompanying article](https://blog.miguelgrinberg.com/post/using-celery-with-flask).
 
 ## Google Sheets
 
@@ -114,6 +114,29 @@ To upload a file to S3, fill in these `.env` values to match your S3 account. If
 - `USE_AWS_S3` use "true" or "false" for this; it will be converted to lowercase if you forget. "false" is the default value for this setting.
 
 
+## Application authentication
+
+We use a basic setup of [Flask-JWT-Extended](https://github.com/vimalloc/flask-jwt-extended) to manage application access.
+
+To generate API keys, run this code:
+
+```python
+import secrets
+secrets.token_hex(64)
+```
+
+Do this for each valid API key that an application can use to access this API.
+
+### Managing API keys
+
+Store a list of valid API keys in the `.env` file or in Heroku configuration.
+
+- `VALID_API_KEYS = '["key1", "key2"]'`
+
+### JWT Secret
+
+Store a single secret key in the `JWT_SECRET_KEY` field of the `.env` file or in Heroku configuration.
+
 ## Running the application
 
 ### Additional configuration
@@ -138,11 +161,22 @@ This application should be deployed to Heroku. If you are creating a new Heroku 
 
 ## Application usage
 
-Currently, this application has two endpoints:
+Currently, this application has three endpoints:
 
+- `authorize` is used to get a token from a valid API key. The token is then required by the other endpoints. This endpoint accepts `POST` requests.
 - `/parser/` is the main endpoint. It accepts `GET` requests, and will return JSON of that Google sheet's data and cache it. If there is a customized JSON structure that has already been cached and has not expired, it will return that instead.
 - `/parser/custom-overwrite/` receives `POST` requests. It receives custom formatted JSON, caches it, and returns it. A `POST` request requires `appliation/json` as the `Content-Type` header.
-    
+
+### Authorization parameters
+
+- `api_key` is *required* in the `POST` body for requests to `authorize`. A request with a valid API key returns a `token`.
+- `token` is *required* as an `Authorization` header value on `/parser/` and `/parser/custom-overwrite/` requests. A request without a valid token in that header will fail. It can generally be passed to a `GET` or `POST` endpoint after it is written like this:
+
+```python
+authorized_headers = {
+    "Authorization": f"Bearer {valid_token_value}"
+}
+```
 
 ### Data parameters
 
