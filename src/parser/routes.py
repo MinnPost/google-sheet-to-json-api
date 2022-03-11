@@ -3,9 +3,14 @@ from flask import json, Response, request, current_app
 from src.storage import Storage
 from src import spreadsheet
 from src.parser import bp
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
 
 @bp.route("/", methods=["GET"])
+@jwt_required()
 def parser():
+    current_api_key = get_jwt_identity()
+    current_app.log.info(f"Current API key is {current_api_key}")
     storage = Storage(request.args)
     output = {}
     spreadsheet_id = request.args.get("spreadsheet_id", None)
@@ -33,7 +38,10 @@ def parser():
 
 
 @bp.route("/custom-overwrite/", methods=["POST"])
+@jwt_required()
 def overwrite():
+    current_api_key = get_jwt_identity()
+    current_app.log.info(f"Current API key is {current_api_key}")
     storage = Storage(request.data, "POST")
     output = {}
     data = json.loads(request.data)
