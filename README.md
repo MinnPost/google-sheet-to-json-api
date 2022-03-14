@@ -103,7 +103,7 @@ Use the following fields in your `.env` or in your Heroku settings.
 
 To push JSON data from this application to Amazon AWS, we use the `boto3` library.
 
-### Amazon S3 configuration
+#### Amazon S3 configuration
 
 To upload a file to S3, fill in these `.env` values to match your S3 account. If S3 is enabled, URLs for your files will be `https://s3.amazonaws.com/[your bucket]/[your folder]/[this spreadsheet's cachekey].json`.
 
