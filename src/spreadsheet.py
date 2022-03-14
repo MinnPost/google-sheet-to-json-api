@@ -78,16 +78,4 @@ def read_spreadsheet(spreadsheet_id, worksheet_name = None, sheet = None):
         current_app.log.error("[%s] Unable to connect to spreadsheet source: %s. The error was %s" % ('spreadsheet', spreadsheet_id, err))
     return data
 
-# do we need this?
-def convert_xls_boolean(string):
-    if string == None:
-        value = False
-    else:
-        string = string.lower()
-        if string == "yes" or string == "true":
-            value = True
-        elif string == "no" or string == "false":
-            value = False
-        else:
-            value = bool(string)
-    return value
+# todo: if there are any universally applicable formatting methods we can trust, add them here

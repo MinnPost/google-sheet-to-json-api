@@ -19,3 +19,5 @@ class Config(object):
     S3_DOMAIN_ROOT = os.path.join(os.environ.get("S3_DOMAIN_ROOT", "https://s3.amazonaws.com/"), '') # make sure it has one slash and only one slash
     USE_AWS_S3 = os.environ.get("USE_AWS_S3", "false").lower()
     WORKSHEET_NAME_SEPARATOR = os.environ.get("WORKSHEET_NAME_SEPARATOR", "|")
+    JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "")
+    VALID_API_KEYS = os.environ.get("VALID_API_KEYS", '[""]')

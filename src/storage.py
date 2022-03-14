@@ -141,7 +141,6 @@ class CacheStorage(object):
     def get(self, key):
         custom_cache_key = key + '-custom'        
         output = cache.get(custom_cache_key)
-        #print(custom_cache_key)
         if output == None:
             output = cache.get(key)
             if output != None:
