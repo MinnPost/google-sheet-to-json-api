@@ -118,7 +118,7 @@ To upload a file to S3, fill in these `.env` values to match your S3 account. If
 
 We use a basic setup of [Flask-JWT-Extended](https://github.com/vimalloc/flask-jwt-extended) to manage application access.
 
-To generate API keys, run this code:
+To generate API keys, run this code in a Python shell:
 
 ```python
 import secrets
@@ -133,7 +133,7 @@ Store a list of valid API keys in the `.env` file or in Heroku configuration.
 
 - `VALID_API_KEYS = '["key1", "key2"]'`
 
-### JWT Secret
+### Managing the JWT Secret
 
 Store a single secret key in the `JWT_SECRET_KEY` field of the `.env` file or in Heroku configuration.
 
@@ -155,8 +155,6 @@ There are a few general `.env` variables not already discussed. You can see thes
 
 ### Production setup and deployment
 
-#### Code, Libraries and prerequisites
-
 This application should be deployed to Heroku. If you are creating a new Heroku application, clone this repository with `git clone https://github.com/MinnPost/google-sheet-to-json-api.git` and follow [Heroku's instructions](https://devcenter.heroku.com/articles/git#creating-a-heroku-remote) to create a Heroku remote.
 
 ## Application usage
@@ -165,12 +163,14 @@ Currently, this application has three endpoints:
 
 - `authorize` is used to get a token from a valid API key. The token is then required by the other endpoints. This endpoint accepts `POST` requests.
 - `/parser/` is the main endpoint. It accepts `GET` requests, and will return JSON of that Google sheet's data and cache it. If there is a customized JSON structure that has already been cached and has not expired, it will return that instead.
-- `/parser/custom-overwrite/` receives `POST` requests. It receives custom formatted JSON, caches it, and returns it. A `POST` request requires `appliation/json` as the `Content-Type` header.
+- `/parser/custom-overwrite/` receives `POST` requests. It receives custom formatted JSON, caches it, and returns it. A `POST` request requires `application/json` as the `Content-Type` header. It's a good idea to use `application/json` for `GET` requests as well to make the `Authorization` header easier, but you don't necessarily have to do this.
 
 ### Authorization parameters
 
 - `api_key` is *required* in the `POST` body for requests to `authorize`. A request with a valid API key returns a `token`.
-- `token` is *required* as an `Authorization` header value on `/parser/` and `/parser/custom-overwrite/` requests. A request without a valid token in that header will fail. It can generally be passed to a `GET` or `POST` endpoint after it is written like this:
+- `token` is *required* as an `Authorization` header value on `/parser/` and `/parser/custom-overwrite/` requests. A request without a valid token in that header will fail. It can be passed to a `GET` or `POST` endpoint.
+
+To pass this header to a `GET` or `POST` endpoint within Python, do this:
 
 ```python
 authorized_headers = {
