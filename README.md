@@ -161,7 +161,7 @@ This application should be deployed to Heroku. If you are creating a new Heroku 
 
 Currently, this application has three endpoints:
 
-- `authorize` is used to get a token from a valid API key. The token is then required by the other endpoints. This endpoint accepts `POST` requests.
+- `authorize` is used to get a token from a valid API key. The token is then required by the `/parser/custom-overwrite/` endpoint. This endpoint accepts `POST` requests.
 - `/parser/` is the main endpoint. It accepts `GET` requests, and will return JSON of that Google sheet's data and cache it. If there is a customized JSON structure that has already been cached and has not expired, it will return that instead.
 - `/parser/custom-overwrite/` receives `POST` requests. It receives custom formatted JSON, caches it, and returns it. A `POST` request requires `application/json` as the `Content-Type` header. It's a good idea to use `application/json` for `GET` requests as well to make the `Authorization` header easier, but you don't necessarily have to do this.
 
@@ -170,7 +170,7 @@ Currently, this application has three endpoints:
 - `api_key` is *required* in the `POST` body for requests to `authorize`. A request with a valid API key returns a `token`.
 - `token` is *required* as an `Authorization` header value on `/parser/` and `/parser/custom-overwrite/` requests. A request without a valid token in that header will fail. It can be passed to a `GET` or `POST` endpoint.
 
-To pass this header to a `GET` or `POST` endpoint within Python, do this:
+To pass this header to an endpoint within Python, do this:
 
 ```python
 authorized_headers = {
