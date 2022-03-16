@@ -78,6 +78,7 @@ class S3Storage(object):
         current_app.log.info(f"Store data in S3. The url is {file_url}.")
         data["file_url"] = file_url
         data.pop("cache_timeout", None)
+        data.pop("cache_key", None)
         output = json.dumps(data, default=str)
         s3 = boto3.client('s3')
         result = s3.put_object(Bucket=self.bucket, 
@@ -130,6 +131,7 @@ class CacheStorage(object):
                 data["cache_timeout"] = 0
         else:
             current_app.log.info(f"Do not cache data for the {key} key.")
+        data["cache_key"] = key
         data.pop("file_url", None)
         output = json.dumps(data, default=str)
         if self.cache_data == "true":

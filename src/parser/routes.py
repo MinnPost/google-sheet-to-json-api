@@ -13,9 +13,12 @@ def parser():
     spreadsheet_id = request.args.get("spreadsheet_id", None)
     if spreadsheet_id != None:
         worksheet_slug = request.args.get("worksheet_names", "")
-        worksheet_names = worksheet_slug.split(current_app.config["WORKSHEET_NAME_SEPARATOR"])
-        worksheet_names.sort()
-        key = spreadsheet_id + '-' + worksheet_slug
+        worksheet_names = [""]
+        if worksheet_slug != "":
+            worksheet_names = worksheet_slug.split(current_app.config["WORKSHEET_NAME_SEPARATOR"])
+            worksheet_names.sort()
+            worksheet_slug = '-' + worksheet_slug
+        key = spreadsheet_id + worksheet_slug
         output = storage.get(key)
         if output == None:
             current_app.log.info(f"Stored data for {key} is not available. Try to load data from the spreadsheet.")
