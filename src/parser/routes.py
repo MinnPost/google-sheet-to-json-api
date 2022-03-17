@@ -12,17 +12,26 @@ def parser():
     output = {}
     spreadsheet_id = request.args.get("spreadsheet_id", None)
     if spreadsheet_id != None:
-        worksheet_slug = request.args.get("worksheet_names", "")
+        worksheet_names_slug = request.args.get("worksheet_names", "")
+        worksheet_keys_slug = request.args.get("worksheet_keys", "")
         worksheet_names = [""]
-        if worksheet_slug != "":
-            worksheet_names = worksheet_slug.split(current_app.config["WORKSHEET_NAME_SEPARATOR"])
+        worksheet_keys = [""]
+        if worksheet_names_slug != "":
+            worksheet_names = worksheet_names_slug.split(current_app.config["WORKSHEET_NAME_SEPARATOR"])
             worksheet_names.sort()
-            worksheet_slug = '-' + worksheet_slug
-        key = spreadsheet_id + worksheet_slug
+            worksheet_names_slug = '-' + worksheet_names_slug
+            key = spreadsheet_id + worksheet_names_slug
+        elif worksheet_keys_slug != "":
+            worksheet_keys = worksheet_keys_slug.split(current_app.config["WORKSHEET_NAME_SEPARATOR"])
+            worksheet_keys.sort()
+            worksheet_keys_slug = '-' + worksheet_keys_slug
+            key = spreadsheet_id + worksheet_keys_slug
+        else:
+            key = spreadsheet_id
         output = storage.get(key)
         if output == None:
             current_app.log.info(f"Stored data for {key} is not available. Try to load data from the spreadsheet.")
-            data = spreadsheet.parser(spreadsheet_id, worksheet_names)
+            data = spreadsheet.parser(spreadsheet_id, worksheet_names, worksheet_keys)
             output = storage.save(key, data)
     else:
         current_app.log.error('No spreadsheet ID is present.')

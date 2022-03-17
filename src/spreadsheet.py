@@ -3,14 +3,21 @@ from flask import current_app
 from src.extensions import cache
 from sheetfu import SpreadsheetApp
 
-def parser(spreadsheet_id = None, worksheet_names = [""]):
+def parser(spreadsheet_id = None, worksheet_names = [""], worksheet_keys = [""]):
     data = {}
     if spreadsheet_id is not None:
         if worksheet_names == [""]:
             sheets = get_spreadsheet_sheets(spreadsheet_id)
-            first_worksheet_name = sheets[0].name
-            worksheet_names = first_worksheet_name.split(current_app.config["WORKSHEET_NAME_SEPARATOR"])
-        for idx, worksheet_name in enumerate(worksheet_names):
+            if worksheet_keys != [""]:
+                worksheet_names = []
+                for worksheet_key in worksheet_keys:
+                    worksheet_name = sheets[int(worksheet_key)].name
+                    if worksheet_name:
+                        worksheet_names.append(worksheet_name)
+            else:
+                first_worksheet_name = sheets[0].name
+                worksheet_names = first_worksheet_name.split(current_app.config["WORKSHEET_NAME_SEPARATOR"])
+        for worksheet_name in worksheet_names:
             data[worksheet_name] = read_spreadsheet(spreadsheet_id, worksheet_name)
         data["generated"] = datetime.datetime.now()
     return data
@@ -31,7 +38,7 @@ def get_spreadsheet_sheets(spreadsheet_id):
         sheets = spreadsheet.get_sheets()
         data = sheets
     except Exception as err:
-        current_app.log.error("[%s] Unable to connect to spreadsheet source: %s. The error was %s" % ('spreadsheet', spreadsheet_id, err))
+        current_app.log.error("[%s] Unable to connect to spreadsheet source: %s to read its list of worksheets. The error was %s" % ('spreadsheet', spreadsheet_id, err))
     
     return data
 
