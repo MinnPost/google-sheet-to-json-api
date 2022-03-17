@@ -56,13 +56,20 @@ def overwrite():
     data = json.loads(request.data)
     spreadsheet_id = data["spreadsheet_id"]
     if spreadsheet_id:
-        if data["worksheet_names"]:
+        if "worksheet_names" in data:
             worksheet_names = data["worksheet_names"]
+            worksheet_names.sort()
+            worksheet_names_slug = current_app.config["WORKSHEET_NAME_SEPARATOR"].join(worksheet_names)
+            key = spreadsheet_id + "-" + worksheet_names_slug
+        elif "worksheet_keys" in data:
+            worksheet_keys = data["worksheet_keys"]
+            worksheet_keys.sort()
+            worksheet_keys_slug = current_app.config["WORKSHEET_NAME_SEPARATOR"].join(worksheet_keys)
+            key = spreadsheet_id + "-" + worksheet_keys_slug
         else:
-            worksheet_names = []
-        worksheet_names.sort()
-        worksheet_slug = current_app.config["WORKSHEET_NAME_SEPARATOR"].join(worksheet_names)
-        key = spreadsheet_id + '-' + worksheet_slug + "-custom"
+            key = spreadsheet_id
+
+        key = key + "-custom"
         output = storage.get(key)
         if output == None:
             current_app.log.info(f"Stored data for {key} is not available. Load data from the JSON request.")
