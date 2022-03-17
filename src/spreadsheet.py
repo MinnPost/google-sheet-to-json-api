@@ -9,16 +9,21 @@ def parser(spreadsheet_id = None, worksheet_names = [""], worksheet_keys = [""])
         if worksheet_names == [""]:
             sheets = get_spreadsheet_sheets(spreadsheet_id)
             if worksheet_keys != [""]:
-                worksheet_names = []
+                valid_worksheet_keys = []
                 for worksheet_key in worksheet_keys:
                     worksheet_name = sheets[int(worksheet_key)].name
                     if worksheet_name:
-                        worksheet_names.append(worksheet_name)
+                        valid_worksheet = {"key": worksheet_key, "name": worksheet_name}
+                        valid_worksheet_keys.append(valid_worksheet)
             else:
                 first_worksheet_name = sheets[0].name
                 worksheet_names = first_worksheet_name.split(current_app.config["WORKSHEET_NAME_SEPARATOR"])
-        for worksheet_name in worksheet_names:
-            data[worksheet_name] = read_spreadsheet(spreadsheet_id, worksheet_name)
+        if worksheet_names != [""]:
+            for worksheet_name in worksheet_names:
+                data[worksheet_name] = read_spreadsheet(spreadsheet_id, worksheet_name)
+        if worksheet_keys != [""]:
+            for worksheet in valid_worksheet_keys:
+                data[worksheet["key"]] = read_spreadsheet(spreadsheet_id, worksheet["name"])
         data["generated"] = datetime.datetime.now()
     return data
 
