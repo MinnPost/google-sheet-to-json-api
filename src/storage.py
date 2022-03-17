@@ -79,6 +79,7 @@ class S3Storage(object):
         data["file_url"] = file_url
         data.pop("cache_timeout", None)
         data.pop("cache_key", None)
+        data.pop("loaded_from_cache", None)
         output = json.dumps(data, default=str)
         s3 = boto3.client('s3')
         result = s3.put_object(Bucket=self.bucket, 
@@ -132,6 +133,7 @@ class CacheStorage(object):
         else:
             current_app.log.info(f"Do not cache data for the {key} key.")
         data["cache_key"] = key
+        data["loaded_from_cache"] = False
         data.pop("file_url", None)
         output = json.dumps(data, default=str)
         if self.cache_data == "true":
@@ -141,13 +143,16 @@ class CacheStorage(object):
 
 
     def get(self, key):
+        loaded_from_cache = False
         custom_cache_key = key + '-custom'        
         output = cache.get(custom_cache_key)
         if output == None:
             output = cache.get(key)
             if output != None:
+                loaded_from_cache = True
                 current_app.log.info(f"Get data from the cache. The key is {key}.")
         else:
+            loaded_from_cache = True
             current_app.log.info(f"Get data from the cache. The key is {custom_cache_key}.")
 
         if self.delete_cache == "true":
@@ -157,6 +162,10 @@ class CacheStorage(object):
 
         if self.bypass_cache == "true":
             output = None
+            loaded_from_cache = False
             current_app.log.info(f"Cached data for {key} is not available.")
-
+        if output != None:
+            output = json.loads(output)
+            output["loaded_from_cache"] = loaded_from_cache
+            output = json.dumps(output, default=str)
         return output
