@@ -83,6 +83,8 @@ def read_spreadsheet(spreadsheet_id, worksheet_name = None, sheet = None):
                         row[i] = None
                     if isinstance(row[i], datetime.datetime):
                         row[i] = row[i].isoformat()
+                    if isinstance(row[i], str):
+                        row[i] = row[i].strip()
                     this_row[headings[i]] = row[i]
                 data.append(this_row)
 
