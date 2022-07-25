@@ -4,13 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-Flask = "==2.0.3"
-redis = "==4.1.4"
+Flask = "==2.1.2"
+redis = "==4.3.4"
 sheetfu = "==1.6.1"
-flask-caching = "==1.10.1"
+flask-caching = "==2.0.0"
 gunicorn = "==20.1.0"
-boto3 = "==1.21.18"
-flask-jwt-extended = "==4.3.1"
+boto3 = "==1.24.36"
+flask-jwt-extended = "==4.4.2"
 
 [requires]
 python_version = "3.10"
